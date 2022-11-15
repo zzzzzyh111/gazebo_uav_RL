@@ -9,6 +9,7 @@ import cv2
 import time
 import tf
 import math as math
+import random
 import copy
 import config
 
@@ -38,8 +39,8 @@ class GazeboUAV():
         self.default_states = None
         self.depth_image = None
 
-        self.goal_space = config.goal_space[0]
-        self.start_space = config.start_space[0]
+        self.goal_space = config.goal_space
+        self.start_space = config.start_space
         self.obstacle_pos = config.obstacle_position
         self.des = Point32()
 
@@ -50,6 +51,7 @@ class GazeboUAV():
         self.reward = 0
         self.obstacle_state = []
         self._actions = []
+        self.cylinder_pos = [[] for i in range(10)]
         self.stacked_imgs = None
 
         # ------------------------Publisher and Subscriber---------------------------
@@ -88,8 +90,9 @@ class GazeboUAV():
 
         if self.default_states is None:
             self.default_states = copy.deepcopy(data)
-
-        # print("UAV has been reset!")
+        for i in range(10):
+            idx = data.name.index("unit_cylinder" + str(i))
+            self.cylinder_pos[i] = [data.pose[idx].position.x, data.pose[idx].position.y]
 
     def DepthImageCallBack(self, img):
         self.depth_image = img
@@ -146,8 +149,8 @@ class GazeboUAV():
 
     def DetectCollision(self):
         collision = False
-        for i in range(len(self.obstacle_pos)):
-            e, _ = self.obstacle2robot(self.obstacle_pos[i][0], self.obstacle_pos[i][1])
+        for i in range(len(self.cylinder_pos)):
+            e, _ = self.obstacle2robot(self.cylinder_pos[i][0], self.cylinder_pos[i][1])
             if e < 1.2:
             # if self.obstacle2robot(self.obstacle_pos[i][0], self.obstacle_pos[i][1]) < 1.2:
                 collision = True
@@ -164,7 +167,7 @@ class GazeboUAV():
     def GetSelfSpeed(self):
         return self.vel_cmd
 
-    def SetObjectPose(self, x, y, theta):
+    def SetUAVPose(self, x, y, theta):
         state = ModelState()
         state.model_name = 'quadrotor'
         state.reference_frame = 'world'  # ''ground_plane'
@@ -194,6 +197,23 @@ class GazeboUAV():
         #     print("set the model state successfully")
         # except rospy.ServiceException:
         #     print("/gazebo/get_model_state service call failed")
+
+    def SetObjectPose(self):
+        state = ModelState()
+        for i in range(10):
+            state.model_name = 'unit_cylinder' + str(i)
+            state.reference_frame = 'world'  # ''ground_plane'
+            # pose
+            state.pose.position.x = config.obstacle_position[i][0] + random.uniform(-1.0, 1.0)
+            state.pose.position.y = config.obstacle_position[i][1] + random.uniform(-1.0, 1.0)
+            state.pose.position.z = 1
+            state.twist.linear.x = 0
+            state.twist.linear.y = 0
+            state.twist.linear.z = 0
+            state.twist.angular.x = 0
+            state.twist.angular.y = 0
+            state.twist.angular.z = 0
+            self.set_state.publish(state)
 
     def set_goal(self, x, y):
         self.des.x = x
@@ -308,10 +328,12 @@ class GazeboUAV():
 
 
     def reset(self):
-        start = self.start_space
+        start_index = np.random.choice(len(self.start_space))
+        goal_index = np.random.choice(len(self.goal_space))
+        start = self.start_space[start_index]
+        goal = self.goal_space[goal_index]
         theta = - math.pi / 2
-        self.SetObjectPose(start[0], start[1], theta)
-        goal = self.goal_space
+        self.SetUAVPose(start[0], start[1], theta)
         self.set_goal(goal[0], goal[1])
         # self.takeoff()
         # print("Start Position: ", start[0], start[1], "Goal Position: ", goal[0], goal[1])
@@ -349,25 +371,11 @@ class GazeboUAV():
         move_cmd.linear.x = 1.0
         move_cmd.angular.z = angular_z
         self.vel_pub.publish(move_cmd)
+        # time.sleep(0.5)  # execute time
 
-        ts = time.time()
-        while time.time() - ts <= 0.5:
-            if self.DetectCollision():
-                move_cmd.linear.x = 0
-                move_cmd.linear.y = 0
-                move_cmd.angular.z = 0
-                self.vel_pub.publish(move_cmd)
-                break
-        # time.sleep(0.2)  # execute time
-
-        self.vel_cmd = [angular_z]
+    def step(self):
         d1, alpha1 = self.getdist()
         self.p = [d1, alpha1]
-        # self.obstacle_state = []
-        # for i in range(len(self.obstacle_pos)):
-        #     e, beta = self.obstacle2robot(self.obstacle_pos[i][0], self.obstacle_pos[i][1])
-        #     self.obstacle_state.append(e)
-        #     self.obstacle_state.append(beta)
         self.dist = d1
         terminal, reward = self.GetRewardAndTerminate()
         self.reward = reward
