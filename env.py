@@ -188,7 +188,6 @@ class GazeboUAV():
         state.twist.angular.y = 0
         state.twist.angular.z = 0
         self.set_state.publish(state)
-
         # rospy.wait_for_service('/gazebo/set_model_state')
         # try:
         #     set_state = rospy.ServiceProxy('/gazebo/set_model_state', SetModelState)
@@ -199,6 +198,22 @@ class GazeboUAV():
         #     print("/gazebo/get_model_state service call failed")
 
     def SetObjectPose(self):
+        state = ModelState()
+        for i in range(10):
+            state.model_name = 'unit_cylinder' + str(i)
+            state.reference_frame = 'world'  # ''ground_plane'
+            state.pose.position.x = self.cylinder_pos[i][0]
+            state.pose.position.y = self.cylinder_pos[i][1]
+            state.pose.position.z = 1
+            state.twist.linear.x = 0
+            state.twist.linear.y = 0
+            state.twist.linear.z = 0
+            state.twist.angular.x = 0
+            state.twist.angular.y = 0
+            state.twist.angular.z = 0
+            self.set_state.publish(state)
+
+    def SetObjectPose_random(self):
         state = ModelState()
         for i in range(10):
             state.model_name = 'unit_cylinder' + str(i)

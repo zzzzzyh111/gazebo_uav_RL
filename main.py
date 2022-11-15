@@ -22,7 +22,9 @@ max_step_per_episode = 70
 
 ep_reward_list = []
 for i_episode in range(total_episode + 1):
-    if (i_episode % 10 == 0):
+    if (i_episode % 10 == 0 and i_episode != 0):
+        GazeboUAV.SetObjectPose_random()
+    else:
         GazeboUAV.SetObjectPose()
     state1, state2 = GazeboUAV.reset()
     time.sleep(0.5)
