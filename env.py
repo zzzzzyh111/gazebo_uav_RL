@@ -343,10 +343,10 @@ class GazeboUAV():
 
 
     def reset(self):
-        start_index = np.random.choice(len(self.start_space))
-        goal_index = np.random.choice(len(self.goal_space))
-        start = self.start_space[start_index]
-        goal = self.goal_space[goal_index]
+        # start_index = np.random.choice(len(self.start_space))
+        # goal_index = np.random.choice(len(self.goal_space))
+        start = self.start_space[0]
+        goal = self.goal_space[0]
         theta = - math.pi / 2
         self.SetUAVPose(start[0], start[1], theta)
         self.set_goal(goal[0], goal[1])

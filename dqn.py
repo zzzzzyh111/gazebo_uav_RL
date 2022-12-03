@@ -73,7 +73,7 @@ class DQNNet(nn.Module):
 
 class DQN():
     def __init__(self, env, memory_size=50000, learning_rate=4e-5, batch_size=32, target_update=1000,
-                 gamma=0.95, eps=1, eps_min=0.1, eps_period=2000):
+                 gamma=0.95, eps=0, eps_min=0, eps_period=2000):
         super(DQN, self).__init__()
         self.env = env
 
@@ -147,3 +147,6 @@ class DQN():
 
     def save_model(self, filename):
         torch.save(self.predict_net.state_dict(), filename)
+
+    def load_model(self, filename):
+        self.predict_net.load_state_dict(torch.load(filename))
