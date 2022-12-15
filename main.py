@@ -58,5 +58,5 @@ for i_episode in range(total_episode + 1):
         i_episode, t, ep_reward, round(agent.eps, 4)))
 
     if (i_episode + 1) % 100 == 0:
-        np.savetxt(model_path + 'DQN_Reward.txt', ep_reward_list)
-        agent.save_model(model_path + '/dqn.pth')
+        np.savetxt(model_path + 'DDQN_Reward_lab1.txt', ep_reward_list)
+        agent.save_model(model_path + '/ddqn_lab1.pth')
