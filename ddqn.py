@@ -73,9 +73,10 @@ class DQNNet(nn.Module):
 
 class DQN():
     def __init__(self, env, memory_size=50000, learning_rate=4e-5, batch_size=32, target_update=1000,
-                 gamma=0.95, eps=0.95, eps_min=0.1, eps_period=2000):
+                 gamma=0.95, eps=0.95, eps_min=0.1, eps_period=2000, DDQN=False):
         super(DQN, self).__init__()
         self.env = env
+        self.DDQN = DDQN
 
         # Torch
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -102,6 +103,12 @@ class DQN():
         self.eps = eps
         self.eps_min = eps_min
         self.eps_period = eps_period
+
+        # Select the algorithm
+        if self.DDQN:
+            print("DDQN")
+        else:
+            print("DQN")
 
     # Get the action
     def get_action(self, state1, state2):
@@ -130,10 +137,15 @@ class DQN():
         next_states2 = torch.FloatTensor(next_states2).to(self.device)
         dones = torch.FloatTensor(dones).to(self.device)
         # Calculate values and target values
-        _, actions_prime = torch.max(self.predict_net(next_states1, next_states2), 1)
-        q_target_value = self.target_net(next_states1, next_states2).gather(1, actions_prime.view(-1, 1))
-        target_values = (rewards.view(-1, 1) + self.gamma * q_target_value * (1 - dones).view(-1, 1))
-        predict_values = self.predict_net(states1, states2).gather(1, actions.view(-1, 1))
+        if self.DDQN == True:
+            _, actions_prime = torch.max(self.predict_net(next_states1, next_states2), 1)
+            q_target_value = self.target_net(next_states1, next_states2).gather(1, actions_prime.view(-1, 1))
+            target_values = (rewards.view(-1, 1) + self.gamma * q_target_value * (1 - dones).view(-1, 1))
+            predict_values = self.predict_net(states1, states2).gather(1, actions.view(-1, 1))
+        else:
+            target_values = (rewards + self.gamma * torch.max(self.target_net(next_states1, next_states2), 1)[0] * (
+                        1 - dones)).view(-1, 1)
+            predict_values = self.predict_net(states1, states2).gather(1, actions.view(-1, 1))
 
         # Calculate the loss and optimize the network
         loss = self.loss_fn(predict_values, target_values)

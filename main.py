@@ -4,15 +4,15 @@ from __future__ import absolute_import
 from __future__ import print_function
 import os
 import env
-import dqn
+import ddqn
 import numpy as np
 import time
 import rospy
 from std_srvs.srv import Empty
 
 GazeboUAV = env.GazeboUAV()
-agent = dqn.DQN(GazeboUAV, batch_size=64, memory_size=10000, target_update=4,
-                gamma=0.99, learning_rate=1e-4, eps_min=0.1, eps_period=5000)
+agent = ddqn.DQN(GazeboUAV, batch_size=64, memory_size=10000, target_update=4,
+                gamma=0.99, learning_rate=1e-4, eps_min=0.1, eps_period=5000, DDQN=False)
 
 model_path = '/home/zyh/catkin_ws/src/UAV/scripts/Record/'
 if not os.path.exists(model_path):
@@ -58,5 +58,5 @@ for i_episode in range(total_episode + 1):
         i_episode, t, ep_reward, round(agent.eps, 4)))
 
     if (i_episode + 1) % 100 == 0:
-        np.savetxt(model_path + 'DDQN_Reward_lab1.txt', ep_reward_list)
-        agent.save_model(model_path + '/ddqn_lab1.pth')
+        np.savetxt(model_path + 'DQN_Reward_lab1_Random.txt', ep_reward_list)
+        agent.save_model(model_path + '/dqn_lab1-Random.pth')
