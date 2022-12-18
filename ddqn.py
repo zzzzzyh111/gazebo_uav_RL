@@ -34,8 +34,9 @@ class ReplayBuffer():
 
 
 class DQNNet(nn.Module):
-    def __init__(self):
+    def __init__(self, network='DQN'):
         super(DQNNet, self).__init__()
+        self.network = network
         self.cnn_1 = nn.Conv2d(in_channels=12, out_channels=32, kernel_size=(8, 6), stride=8)
         self.cnn_2 = nn.Conv2d(32, 64, kernel_size=(4, 3), stride=3)
         self.pool_1 = nn.MaxPool2d(2, stride=2)
@@ -50,6 +51,8 @@ class DQNNet(nn.Module):
         self.fc_test1 = nn.Linear(22, 128)
         self.fc_test2 = nn.Linear(128, 128)
         self.fc_test3 = nn.Linear(128, 5)
+        self.advantage = nn.Linear(128, 5)
+        self.value = nn.Linear(128, 1)
 
     def forward(self, state1, state2):
         batch_size = state1.size(0)
@@ -64,30 +67,39 @@ class DQNNet(nn.Module):
         fc_1 = F.relu(self.fc_1(x_merge))
         fc_2 = F.relu(self.fc_2(fc_1))
         fc_3 = F.relu(self.fc_2(fc_2))
-        x_output = self.output(fc_3)
-        # x1 = F.relu(self.fc_test1(state))
-        # x2 = F.relu(self.fc_test2(x1))
-        # x_output = self.fc_test3(x2)
+
+        # Dueling DQN--Split the output
+        # 改变算法得改变DQNNET网络参数 / DQN算法参数
+        if self.network == "Duel":
+            advantage, value = torch.split(fc_3, 128, dim=1)
+            advantage = self.advantage(advantage)
+            value = self.value(value)
+            x_output = value + advantage - torch.mean(advantage, dim=1, keepdim=True)
+        else:
+            x_output = self.output(fc_3)
+            # x1 = F.relu(self.fc_test1(state))
+            # x2 = F.relu(self.fc_test2(x1))
+            # x_output = self.fc_test3(x2)
         return x_output
 
 
 class DQN():
     def __init__(self, env, memory_size=50000, learning_rate=4e-5, batch_size=32, target_update=1000,
-                 gamma=0.95, eps=0.95, eps_min=0.1, eps_period=2000, DDQN=False):
+                 gamma=0.95, eps=0.95, eps_min=0.1, eps_period=2000, network='DQN'):
         super(DQN, self).__init__()
         self.env = env
-        self.DDQN = DDQN
+        self.network = network
 
         # Torch
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         print(self.device)
         # Deep Q network
-        self.predict_net = DQNNet().to(self.device)
+        self.predict_net = DQNNet(network='Duel').to(self.device)
         self.optimizer = optim.Adam(self.predict_net.parameters(), lr=learning_rate)
         self.loss_fn = nn.MSELoss()
 
         # Target network
-        self.target_net = DQNNet().to(self.device)
+        self.target_net = DQNNet(network='Duel').to(self.device)
         self.target_net.load_state_dict(self.predict_net.state_dict())
         self.target_update = target_update
         self.update_count = 0
@@ -105,10 +117,12 @@ class DQN():
         self.eps_period = eps_period
 
         # Select the algorithm
-        if self.DDQN:
-            print("DDQN")
-        else:
+        if self.network == "DQN":
             print("DQN")
+        elif self.network == "Double":
+            print("DDQN")
+        elif self.network == "Duel":
+            print("Duel")
 
     # Get the action
     def get_action(self, state1, state2):
@@ -137,7 +151,7 @@ class DQN():
         next_states2 = torch.FloatTensor(next_states2).to(self.device)
         dones = torch.FloatTensor(dones).to(self.device)
         # Calculate values and target values
-        if self.DDQN == True:
+        if self.network == 'Duel' or self.network == 'Double':
             _, actions_prime = torch.max(self.predict_net(next_states1, next_states2), 1)
             q_target_value = self.target_net(next_states1, next_states2).gather(1, actions_prime.view(-1, 1))
             target_values = (rewards.view(-1, 1) + self.gamma * q_target_value * (1 - dones).view(-1, 1))
