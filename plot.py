@@ -3,8 +3,9 @@
 import matplotlib.pyplot as plt
 import numpy as np
 m = 100
+
 path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/'
-ep_reward_arr_1 = np.loadtxt(path + 'DQN_Reward.txt')
+ep_reward_arr_1 = np.loadtxt(path + 'DQN_Reward_lab1_Random.txt')
 ep_reward_arr_2 = np.loadtxt(path + 'DDQN_Reward_lab1.txt')
 ep_reward_arr_3 = np.loadtxt(path + 'Duel_DQN_Reward_home1.txt')
 n = len(ep_reward_arr_1) // m
