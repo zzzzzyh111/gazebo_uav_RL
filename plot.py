@@ -5,17 +5,17 @@ import numpy as np
 m = 100
 
 path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/'
-ep_reward_arr_1 = np.loadtxt(path + 'DQN_Reward_lab1_Random.txt')
-ep_reward_arr_2 = np.loadtxt(path + 'DDQN_Reward_lab1.txt')
-ep_reward_arr_3 = np.loadtxt(path + 'Duel_DQN_Reward_home1.txt')
-n = len(ep_reward_arr_1) // m
+ep_reward_arr_1 = np.loadtxt(path + 'DQN_Reward_home1.txt')
+ep_reward_arr_2 = np.loadtxt(path + 'DDQN_Reward_home1.txt')
+ep_reward_arr_3 = np.loadtxt(path + 'Duel_DQN_Reward_home2_sup.txt')
+n = 15000 // m
 avg_reward_arr_1 = np.mean(np.reshape(ep_reward_arr_1[:m*n], [n, m]), 1)
-n = len(ep_reward_arr_2) // m
+n = 15000// m
 avg_reward_arr_2 = np.mean(np.reshape(ep_reward_arr_2[:m*n], [n, m]), 1)
 n = len(ep_reward_arr_3) // m
 avg_reward_arr_3 = np.mean(np.reshape(ep_reward_arr_3[:m*n], [n, m]), 1)
 plt.plot(avg_reward_arr_1, label='DQN')
-plt.plot(avg_reward_arr_2, label='Doouble-DQN')
+plt.plot(avg_reward_arr_2, label='Double-DQN')
 plt.plot(avg_reward_arr_3, label='Duel-DQN')
 plt.xlabel('Episode')
 plt.ylabel('Reward')

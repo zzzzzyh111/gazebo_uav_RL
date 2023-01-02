@@ -7,6 +7,7 @@ import env
 import ddqn
 import numpy as np
 import time
+import torch
 import rospy
 from std_srvs.srv import Empty
 
@@ -15,6 +16,9 @@ agent = ddqn.DQN(GazeboUAV, batch_size=64, memory_size=10000, target_update=4,
                 gamma=0.99, learning_rate=1e-4, eps_min=0.1, eps_period=5000, network='Duel')
 
 model_path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/'
+# Load pre-trained model
+param_path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/Duel_DQN_Reward_home2.pth'
+# agent.load_model(param_path, map_location=torch.device('cuda：0'))
 if not os.path.exists(model_path):
     os.makedirs(model_path)
 total_episode = 25000
@@ -58,5 +62,5 @@ for i_episode in range(total_episode + 1):
         i_episode, t, ep_reward, round(agent.eps, 4)))
 
     if (i_episode + 1) % 100 == 0:
-        np.savetxt(model_path + 'Duel_DQN_Reward_home1.txt', ep_reward_list)
-        agent.save_model(model_path + '/Duel_DQN_Reward_home1.pth')
+        np.savetxt(model_path + 'Duel_DQN_Reward_home2_sup.txt', ep_reward_list)
+        agent.save_model(model_path + 'Duel_DQN_Reward_home2_sup.pth')
