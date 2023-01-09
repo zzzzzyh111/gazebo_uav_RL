@@ -52,6 +52,7 @@ class GazeboUAV():
         self.obstacle_state = []
         self._actions = []
         self.cylinder_pos = [[] for i in range(10)]
+        self.uav_trajectory = [[], []]
         self.stacked_imgs = None
 
         # ------------------------Publisher and Subscriber---------------------------
@@ -87,7 +88,8 @@ class GazeboUAV():
                            data.twist[idx].linear.x,
                            data.twist[idx].linear.y,
                            data.twist[idx].angular.z]
-
+        self.uav_trajectory[0].append(data.pose[idx].position.x)
+        self.uav_trajectory[1].append(data.pose[idx].position.y)
         if self.default_states is None:
             self.default_states = copy.deepcopy(data)
         for i in range(10):

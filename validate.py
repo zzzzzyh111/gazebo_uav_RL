@@ -1,14 +1,14 @@
 #!/home/yuhang/anaconda3/bin/python3
 # -*- coding: utf-8 -*-
 import env
-import dqn
+import ddqn
 import time
 import torch
 
 
 
 GazeboUAV = env.GazeboUAV()
-agent = dqn.DQN(GazeboUAV, batch_size=64, memory_size=10000, target_update=4,
+agent = ddqn.DQN(GazeboUAV, batch_size=64, memory_size=10000, target_update=4,
                 gamma=0.99, learning_rate=1e-4, eps_min=0, eps_period=5000)
 # param_path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/'
 param_path = '/home/zyh/catkin_ws/src/UAV/scripts/Record/dqn_1st.pth'
