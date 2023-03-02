@@ -176,4 +176,4 @@ class DQN():
         torch.save(self.predict_net.state_dict(), filename)
 
     def load_model(self, filename, map_location):
-        self.predict_net.load_state_dict(torch.load(filename, map_location=torch.device('cpu')))
+        self.predict_net.load_state_dict(torch.load(filename, map_location=torch.device('cpu')), strict=False)
