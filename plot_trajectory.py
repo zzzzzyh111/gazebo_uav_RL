@@ -83,8 +83,8 @@ plt.grid(linestyle='-')
 plt.axis('equal')
 plt.yticks(size=14)
 plt.xticks(size=14)
-plt.xlabel('$x \ [\mathrm{m}]$', fontsize=14)
-plt.ylabel('$y \ [\mathrm{m}]$', fontsize=14)
+plt.xlabel('$x \ [\mathrm{m}]$', fontsize=16)
+plt.ylabel('$y \ [\mathrm{m}]$', fontsize=16)
 legend_elements = [Line2D([0], [0],linestyle=':', linewidth=3,color='orange', label='DQN'),
                    Line2D([0], [0],marker='v', color='w', label='Starting Point', markerfacecolor='g',
                           markersize=15),

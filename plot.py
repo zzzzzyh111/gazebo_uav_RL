@@ -2,7 +2,18 @@
 # -*- coding: utf-8 -*-
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import rcParams
+
+config = {
+    "font.family":'Times New Roman',
+    "font.size": 12,
+    "mathtext.fontset":'stix',
+    "font.serif": ['SimSun'],
+}
+
+rcParams.update(config)
 m = 100
+
 
 # path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/'
 path = '/home/zyh/catkin_ws/src/UAV/scripts/Record/'
