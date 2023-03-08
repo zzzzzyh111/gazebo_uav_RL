@@ -88,8 +88,9 @@ class GazeboUAV():
                            data.twist[idx].linear.x,
                            data.twist[idx].linear.y,
                            data.twist[idx].angular.z]
-        self.uav_trajectory[0].append(data.pose[idx].position.x)
-        self.uav_trajectory[1].append(data.pose[idx].position.y)
+        # training的时候这玩意注释掉，不然时间就了影响速度
+        # self.uav_trajectory[0].append(data.pose[idx].position.x)
+        # self.uav_trajectory[1].append(data.pose[idx].position.y)
         if self.default_states is None:
             self.default_states = copy.deepcopy(data)
         for i in range(10):
@@ -349,11 +350,12 @@ class GazeboUAV():
         goal_index = np.random.choice(len(self.goal_space))
         start = self.start_space[start_index]
         goal = self.goal_space[goal_index]
-        print("start = ", start)
-        print("goal = ", goal)
+
         # lab测试用的
         # start = [0, 11]
         # goal = [0, -11]
+        print("start = ", start)
+        print("goal = ", goal)
         # -------------------------------------
         theta = - math.pi / 2
         self.SetUAVPose(start[0], start[1], theta)

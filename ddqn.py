@@ -94,12 +94,12 @@ class DQN():
         self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
         print(self.device)
         # Deep Q network
-        self.predict_net = DQNNet(network='Duel').to(self.device)
+        self.predict_net = DQNNet(network='DQN').to(self.device)
         self.optimizer = optim.Adam(self.predict_net.parameters(), lr=learning_rate)
         self.loss_fn = nn.MSELoss()
 
         # Target network
-        self.target_net = DQNNet(network='Duel').to(self.device)
+        self.target_net = DQNNet(network='DQN').to(self.device)
         self.target_net.load_state_dict(self.predict_net.state_dict())
         self.target_update = target_update
         self.update_count = 0
@@ -142,6 +142,7 @@ class DQN():
     # Learn the policy
     def learn(self):
         # Replay buffer
+        # ts = time.time()
         states1, states2, actions, rewards, next_states1, next_states2, dones = self.replay_buffer.sample(self.batch_size)
         states1 = torch.FloatTensor(states1).to(self.device)
         states2 = torch.FloatTensor(states2).to(self.device)
@@ -150,6 +151,8 @@ class DQN():
         next_states1 = torch.FloatTensor(next_states1).to(self.device)
         next_states2 = torch.FloatTensor(next_states2).to(self.device)
         dones = torch.FloatTensor(dones).to(self.device)
+        # print("tensor处理时长=",time.time()-ts)
+        # ts = time.time()
         # Calculate values and target values
         if self.network == 'Duel' or self.network == 'Double':
             _, actions_prime = torch.max(self.predict_net(next_states1, next_states2), 1)
@@ -160,17 +163,21 @@ class DQN():
             target_values = (rewards + self.gamma * torch.max(self.target_net(next_states1, next_states2), 1)[0] * (
                         1 - dones)).view(-1, 1)
             predict_values = self.predict_net(states1, states2).gather(1, actions.view(-1, 1))
-
+            # print("values计算时长=", time.time()-ts)
         # Calculate the loss and optimize the network
+        # ts = time.time()
         loss = self.loss_fn(predict_values, target_values)
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
+        # print('梯度更新时长=', time.time()-ts)
+        # ts = time.time()
         # Update the target network
         self.update_count += 1
         if self.update_count == self.target_update:
             self.target_net.load_state_dict(self.predict_net.state_dict())
             self.update_count = 0
+            # print('target网络更新时长=', time.time()-ts)
 
     def save_model(self, filename):
         torch.save(self.predict_net.state_dict(), filename)

@@ -16,11 +16,11 @@ m = 100
 
 
 # path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/'
-path = '/home/zyh/catkin_ws/src/UAV/scripts/Record/'
-ep_reward_arr_1 = np.loadtxt(path + 'DDQN_Reward_lab1.txt')
-# ep_reward_arr_2 = np.loadtxt(path + 'DDQN_Reward_home1.txt')
-# ep_reward_arr_3 = np.loadtxt(path + 'Duel_DQN_Reward_home2_sup.txt')
-n = 10000 // m
+path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/'
+ep_reward_arr_1 = np.loadtxt(path + 'DQN_home_sup.txt')
+# ep_reward_arr_1 = np.loadtxt(path + 'DDQN_Reward_home1.txt')
+# ep_reward_arr_1 = np.loadtxt(path + 'Duel_DQN_Reward_home2_sup.txt')
+n = len(ep_reward_arr_1) // m
 avg_reward_arr_1 = np.mean(np.reshape(ep_reward_arr_1[:m*n], [n, m]), 1)
 print(len(avg_reward_arr_1))
 # n = 15000// m

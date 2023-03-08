@@ -5,9 +5,7 @@ import matplotlib.font_manager
 from matplotlib.lines import Line2D
 from matplotlib.patches import Circle
 from matplotlib import rcParams
-
 import numpy as np
-import torch
 import env
 import time
 import ddqn
@@ -27,8 +25,11 @@ rcParams.update(config)
 #                 gamma=0.99, learning_rate=1e-4, eps=0, eps_min=0, eps_period=5000, network='Duel')
 # success = False
 # param_path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/Duel_DQN_Reward_home2_sup.pth'
-pos_path='/home/zyh/catkin_ws/src/UAV/scripts/Record/Obstacle_Pos_lab2.txt'
-tra_path = '/home/zyh/catkin_ws/src/UAV/scripts/Record/Tra_Path_lab2.txt'
+pos_path='/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/Obstacle_Pos_scene3.txt'
+tra_path_1 = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/Tra_Path_scene3_DQN.txt'
+tra_path_2 = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/Tra_Path_scene3_Double_DQN.txt'
+tra_path_3 = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/Tra_Path_scene3_Dueling_DQN.txt'
+
 # agent.load_model(param_path, map_location=torch.device('cpu'))
 # for i_episode in range(100):
 #     if not success:
@@ -63,14 +64,21 @@ tra_path = '/home/zyh/catkin_ws/src/UAV/scripts/Record/Tra_Path_lab2.txt'
 figure = plt.figure(1, figsize=(10,10))
 ax = figure.add_subplot(111)
 a = np.loadtxt(pos_path)
-b = np.loadtxt(tra_path)
+b = np.loadtxt(tra_path_1)
+c = np.loadtxt(tra_path_2)
+d = np.loadtxt(tra_path_3)
+print('len(b) = ',len(b[0]))
+print('len(c) = ',len(c[0]))
+print('len(d) = ',len(d[0]))
 print(b[0][0], b[1][0])
 print(b[0][-1], b[1][-1])
 a = [[a[i][0] for i in range(len(a))], [a[i][1] for i in range(len(a))]]
 for i in range(len(a[0])):
     circle = Circle(xy=(a[0][i], a[1][i]), radius=0.5, color='k', alpha=1)
     ax.add_patch(circle)
-plt.plot(b[0], b[1], c='orange', linewidth=3, linestyle=':')
+plt.plot(b[0], b[1], c='dodgerblue', linewidth=3, linestyle=':')
+plt.plot(c[0], c[1], c='chocolate', linewidth=3, linestyle=':')
+plt.plot(d[0], d[1], c='crimson', linewidth=3, linestyle=':')
 plt.plot(b[0][0], b[1][0], c='green', marker='v', markersize=20,)
 # plt.text(b[0][0], b[1][0], 'Starting Point', color='r', fontsize=18, position=(b[0][0]+0.5, b[1][0]),
 #          verticalalignment='bottom')
@@ -85,7 +93,9 @@ plt.yticks(size=14)
 plt.xticks(size=14)
 plt.xlabel('$x \ [\mathrm{m}]$', fontsize=16)
 plt.ylabel('$y \ [\mathrm{m}]$', fontsize=16)
-legend_elements = [Line2D([0], [0],linestyle=':', linewidth=3,color='orange', label='DQN'),
+legend_elements = [Line2D([0], [0],linestyle=':', linewidth=3,color='dodgerblue', label='DQN'),
+                   Line2D([0], [0],linestyle=':', linewidth=3,color='chocolate', label='Double DQN'),
+                   Line2D([0], [0],linestyle=':', linewidth=3,color='crimson', label='Dueling DQN'),
                    Line2D([0], [0],marker='v', color='w', label='Starting Point', markerfacecolor='g',
                           markersize=15),
                    Line2D([0], [0], marker='*', color='w', label='Target Point', markerfacecolor='r',
