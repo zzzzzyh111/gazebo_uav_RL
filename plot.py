@@ -17,25 +17,27 @@ m = 100
 
 # path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/'
 path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/'
-ep_reward_arr_1 = np.loadtxt(path + 'DQN_home_sup.txt')
-# ep_reward_arr_1 = np.loadtxt(path + 'DDQN_Reward_home1.txt')
-# ep_reward_arr_1 = np.loadtxt(path + 'Duel_DQN_Reward_home2_sup.txt')
+ep_reward_arr_1 = np.loadtxt(path + 'DQN_Reward_home1.txt')
+ep_reward_arr_2 = np.loadtxt(path + 'DDQN_Reward_home1.txt')
+ep_reward_arr_3 = np.loadtxt(path + 'Duel_DQN_Reward_home2_sup.txt')
 n = len(ep_reward_arr_1) // m
 avg_reward_arr_1 = np.mean(np.reshape(ep_reward_arr_1[:m*n], [n, m]), 1)
 print(len(avg_reward_arr_1))
-# n = 15000// m
-# avg_reward_arr_2 = np.mean(np.reshape(ep_reward_arr_2[:m*n], [n, m]), 1)
-# n = len(ep_reward_arr_3) // m
-# avg_reward_arr_3 = np.mean(np.reshape(ep_reward_arr_3[:m*n], [n, m]), 1)
+n = 15000// m
+avg_reward_arr_2 = np.mean(np.reshape(ep_reward_arr_2[:m*n], [n, m]), 1)
+n = len(ep_reward_arr_3) // m
+avg_reward_arr_3 = np.mean(np.reshape(ep_reward_arr_3[:m*n], [n, m]), 1)
 plt.xlim((0, 150))
 x_ticks = np.linspace(0, 150, 16)
 plt.xticks(x_ticks)
 plt.plot(avg_reward_arr_1, color='dodgerblue', linewidth=2.0,label='DQN')
-# plt.plot(avg_reward_arr_2, label='Double-DQN')
-# plt.plot(avg_reward_arr_3, label='Duel-DQN')
-plt.xlabel('Episode', fontsize=15)
-plt.ylabel('Average Reward', fontsize=15)
+plt.plot(avg_reward_arr_2,color='chocolate', label='Double DQN')
+plt.plot(avg_reward_arr_3,color='crimson', label='Dueling DQN')
+plt.xlabel('Episode', fontsize=14, weight='bold')
+plt.ylabel('Average Reward', fontsize=14, weight='bold')
+plt.title('Comparison Result of Reward Curve', fontsize=18)
 plt.legend(loc='best')
+plt.savefig('/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/Reward_Comparsion.svg', dpi=600)
 # plt.savefig('./reward.jpg')
 plt.show()
 
