@@ -11,6 +11,7 @@ import time
 import ddqn
 
 
+
 config = {
     "font.family":'Times New Roman',
     "font.size": 12,
@@ -19,7 +20,6 @@ config = {
 }
 
 rcParams.update(config)
-
 # GazeboUAV = env.GazeboUAV()
 # agent = ddqn.DQN(GazeboUAV, batch_size=64, memory_size=10000, target_update=4,
 #                 gamma=0.99, learning_rate=1e-4, eps=0, eps_min=0, eps_period=5000, network='Duel')

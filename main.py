@@ -15,9 +15,9 @@ GazeboUAV = env.GazeboUAV()
 agent = ddqn.DQN(GazeboUAV, batch_size=64, memory_size=10000, target_update=4,
                 gamma=0.99, learning_rate=1e-4, eps=0.95, eps_min=0.1, eps_period=5000, network='DQN')
 
-model_path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/'
+model_path = '/home/zyh/catkin_ws/src/Uav/scripts/Record/'
 # Load pre-trained model
-param_path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/'
+param_path = '/home/zyh/catkin_ws/src/Uav/scripts/Record/'
 # agent.load_model(param_path, map_location=torch.device('cuda：0'))
 if not os.path.exists(model_path):
     os.makedirs(model_path)

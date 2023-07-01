@@ -15,9 +15,9 @@ agent = ddqn.DQN(GazeboUAV, batch_size=64, memory_size=10000, target_update=4,
 success = False
 # param_path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/ddqn_lab1.pth'
 # param_path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/ddqn_lab1.pth'
-param_path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/Duel_DQN_Reward_home2_sup.pth'
-pos_path='/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/Obstacle_Pos_scene3.txt'
-tra_path = '/home/yuhang/catkin_ws/src/uav_ros/scripts/Record/Tra_Path_scene3_DQN.txt'
+param_path = '/home/zyh/catkin_ws/src/Uav/scripts/Record/Duel_DQN_Reward_home2_sup.pth'
+pos_path='/home/zyh/catkin_ws/src/Uav/scripts/Record/Obstacle_Pos_scene3.txt'
+tra_path = '/home/zyh/catkin_ws/src/Uav/scripts/Record/Tra_Path_scene3_DQN.txt'
 
 agent.load_model(param_path, map_location=torch.device('cpu'))
 for i_episode in range(100):
