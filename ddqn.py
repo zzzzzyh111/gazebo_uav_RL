@@ -8,9 +8,6 @@ import rospy
 import torch.optim as optim
 import torch.nn as nn
 import torch.nn.functional as F
-import time
-import env
-import config
 import random
 import numpy as np
 from collections import deque
@@ -44,7 +41,6 @@ class DQNNet(nn.Module):
 
         self.fc_target = nn.Linear(2, 64)
         self.fc_1 = nn.Linear(64 + 64, 256)
-        # self.fc_1 = nn.Linear(192 + 64, 256)
         self.fc_2 = nn.Linear(256, 256)
         self.output = nn.Linear(256, 5)
 
@@ -56,7 +52,7 @@ class DQNNet(nn.Module):
 
     def forward(self, state1, state2):
         batch_size = state1.size(0)
-        img = state1/255
+        img = state1 / 255
         x1 = F.relu(self.cnn_1(img.transpose(1, 3)))
         x2 = F.relu(self.cnn_2(x1))
         x3 = self.pool_1(x2)
@@ -77,9 +73,6 @@ class DQNNet(nn.Module):
             x_output = value + advantage - torch.mean(advantage, dim=1, keepdim=True)
         else:
             x_output = self.output(fc_3)
-            # x1 = F.relu(self.fc_test1(state))
-            # x2 = F.relu(self.fc_test2(x1))
-            # x_output = self.fc_test3(x2)
         return x_output
 
 
@@ -141,8 +134,6 @@ class DQN():
 
     # Learn the policy
     def learn(self):
-        # Replay buffer
-        # ts = time.time()
         states1, states2, actions, rewards, next_states1, next_states2, dones = self.replay_buffer.sample(self.batch_size)
         states1 = torch.FloatTensor(states1).to(self.device)
         states2 = torch.FloatTensor(states2).to(self.device)
@@ -151,8 +142,6 @@ class DQN():
         next_states1 = torch.FloatTensor(next_states1).to(self.device)
         next_states2 = torch.FloatTensor(next_states2).to(self.device)
         dones = torch.FloatTensor(dones).to(self.device)
-        # print("tensor处理时长=",time.time()-ts)
-        # ts = time.time()
         # Calculate values and target values
         if self.network == 'Duel' or self.network == 'Double':
             _, actions_prime = torch.max(self.predict_net(next_states1, next_states2), 1)
@@ -163,21 +152,16 @@ class DQN():
             target_values = (rewards + self.gamma * torch.max(self.target_net(next_states1, next_states2), 1)[0] * (
                         1 - dones)).view(-1, 1)
             predict_values = self.predict_net(states1, states2).gather(1, actions.view(-1, 1))
-            # print("values计算时长=", time.time()-ts)
         # Calculate the loss and optimize the network
-        # ts = time.time()
         loss = self.loss_fn(predict_values, target_values)
         self.optimizer.zero_grad()
         loss.backward()
         self.optimizer.step()
-        # print('梯度更新时长=', time.time()-ts)
-        # ts = time.time()
         # Update the target network
         self.update_count += 1
         if self.update_count == self.target_update:
             self.target_net.load_state_dict(self.predict_net.state_dict())
             self.update_count = 0
-            # print('target网络更新时长=', time.time()-ts)
 
     def save_model(self, filename):
         torch.save(self.predict_net.state_dict(), filename)

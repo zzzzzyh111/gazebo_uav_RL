@@ -9,7 +9,7 @@ import numpy as np
 import time
 import torch
 import rospy
-from std_srvs.srv import Empty
+
 
 GazeboUAV = env.GazeboUAV()
 agent = ddqn.DQN(GazeboUAV, batch_size=64, memory_size=10000, target_update=4,
@@ -34,27 +34,17 @@ for i_episode in range(total_episode + 1):
     time.sleep(0.5)
 
     ep_reward = 0
-    # print('开始交互')
     for t in range(max_step_per_episode):
         action = agent.get_action(state1, state2)
-        # print('action = ', action)
-        # next_state1, next_state2, terminal, reward = GazeboUAV.execute(action)
         GazeboUAV.execute(action)
         ts = time.time()
         if len(agent.replay_buffer.memory) > 64:
             agent.learn()
         while time.time() - ts <= 0.5:
             continue
-        # print("学习时长：", time.time() - ts)
-        # ts = time.time()
         next_state1, next_state2, terminal, reward = GazeboUAV.step()
-        # print("state获取时长：", time.time() - ts)
-        # ts = time.time()
         ep_reward += reward
-        # print('ep_reward = ', reward)
         agent.replay_buffer.add(state1, state2, action, reward, next_state1, next_state2, terminal)
-        # print("buffer_add时长：", time.time() - ts)
-        # print(time.time() - ts)
         if terminal:
             break
 
