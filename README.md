@@ -28,12 +28,10 @@ Since the training process requires real physical time to give the drone time to
 </div>
 The collision-free trajectories are shown below.
 <div align="center">
-    <img src="Record/Image/Tra_Env1-1.png" alt="Tra1" width="200">
-    <img src="Record/Image/Tra_Env2-1.png" alt="Tra2" width="200">
-    <img src="Record/Image/Tra_Env3-1.png" alt="Tra3" width="200">
+    <img src="Record/Image/Tra_Env1-1.png" alt="Tra1" width="150">
+    <img src="Record/Image/Tra_Env2-1.png" alt="Tra2" width="150">
+    <img src="Record/Image/Tra_Env3-1.png" alt="Tra3" width="150">
 </div>
-
-
 This work has been published in [AIAA Aviation 2023 Forum](https://arc.aiaa.org/doi/abs/10.2514/6.2023-3813). Please kindly refer to the following format for citations if needed
 ```
 @inproceedings{zhang2023partially,
