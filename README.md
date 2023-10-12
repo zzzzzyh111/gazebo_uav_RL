@@ -33,7 +33,8 @@ The collision-free trajectories are shown below.
     <img src="Record/Image/Tra_Env3-1.png" alt="Tra3" width="150">
 </div>
 This work has been published in [AIAA Aviation 2023 Forum](https://arc.aiaa.org/doi/abs/10.2514/6.2023-3813). Please kindly refer to the following format for citations if needed
-```
+
+```bibtex
 @inproceedings{zhang2023partially,
   title={Partially-Observable Monocular Autonomous Navigation for UAV through Deep Reinforcement Learning},
   author={Zhang, Yuhang and Low, Kin Huat and Lyu, Chen},
@@ -42,3 +43,4 @@ This work has been published in [AIAA Aviation 2023 Forum](https://arc.aiaa.org/
   year={2023}
 }
 ```
+
