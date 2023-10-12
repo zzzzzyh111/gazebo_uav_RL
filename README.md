@@ -22,7 +22,8 @@ python3 main.py
 ```
 Moreover, you can define your own goal/start/obstacle positions in [config.py](./config.py). Definitions regarding the simulation environment, such as resetting the environment, can be found in [env.py](./env,py). [ddqn.py](./ddqn.py) describes the DQN algorithm and its derivatives. [validate.py](./validate.py) is used to test the parameters.
 
-Since the training process requires real physical time to give the drone time to perform the maneuvers, the training time is long (about 10 hours or so to see the REWARD noticeably rise phenomenon), so please be patient. If you need to do gazebo simulation acceleration, please refer to [this website](https://answers.gazebosim.org//question/12477/speeding-up-gazebo-physics-simulation-considering-ros-plugin-usage/).
+Since the training process requires real physical time to give the drone time to perform the maneuvers, the training time is long (about 10 hours or so to see the REWARD noticeably rise phenomenon), so please be patient. If you need to do gazebo simulation acceleration, please refer to [this website](https://answers.gazebosim.org//question/12477/speeding-up-gazebo-physics-simulation-considering-ros-plugin-usage/). The training curves are shown below.
+![](Record/Image/Reward_Comparison.png) 
 
 This work has been published in [AIAA Aviation 2023 Forum](https://arc.aiaa.org/doi/abs/10.2514/6.2023-3813). Please kindly refer to the following format for citations if needed
 ```
